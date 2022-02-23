@@ -1,0 +1,23 @@
+/node_modules/
+/tmp/
+/build/
+/coverage/
+/.eslintcache
+/.env
+/deploy.sh
+/.vs/
+yarn-error.log*
+
+/static/
+/static-test/
+/public/
+/dist/
+
+.idea
+.DS_Store
+
+# surge.sh
+/CNAME
+/AUTH
+/CORS
+/ROUTER

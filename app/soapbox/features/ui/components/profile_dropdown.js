@@ -1,0 +1,156 @@
+import { is as ImmutableIs } from 'immutable';
+import { throttle } from 'lodash';
+import PropTypes from 'prop-types';
+import React from 'react';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import { defineMessages, injectIntl } from 'react-intl';
+import { connect } from 'react-redux';
+
+import { logOut, switchAccount } from 'soapbox/actions/auth';
+import { fetchOwnAccounts } from 'soapbox/actions/auth';
+import { Menu, MenuButton, MenuDivider, MenuLink, MenuList } from 'soapbox/components/ui';
+import { makeGetAccount, makeGetOtherAccounts } from 'soapbox/selectors';
+import { isStaff } from 'soapbox/utils/accounts';
+
+import Account from '../../../components/account';
+
+const messages = defineMessages({
+  add: { id: 'profile_dropdown.add_account', defaultMessage: 'Add an existing account' },
+  logout: { id: 'profile_dropdown.logout', defaultMessage: 'Log out @{acct}' },
+});
+
+const makeMapStateToProps = () => {
+  const getOtherAccounts = makeGetOtherAccounts();
+  const getAccount = makeGetAccount();
+
+  const mapStateToProps = state => {
+    const me = state.get('me');
+    const account = getAccount(state, me);
+
+    return {
+      account,
+      otherAccounts: getOtherAccounts(state),
+      isStaff: isStaff(account),
+    };
+  };
+
+  return mapStateToProps;
+};
+
+class ProfileDropdown extends React.PureComponent {
+
+  static propTypes = {
+    intl: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
+    account: ImmutablePropTypes.map,
+    otherAccounts: ImmutablePropTypes.list,
+    isStaff: PropTypes.bool.isRequired,
+    children: PropTypes.node.isRequired,
+  };
+
+  static defaultProps = {
+    isStaff: false,
+  }
+
+  handleLogOut = e => {
+    this.props.dispatch(logOut(this.props.intl));
+    e.preventDefault();
+  };
+
+  handleSwitchAccount = account => {
+    return e => {
+      this.props.dispatch(switchAccount(account.get('id')));
+      e.preventDefault();
+    };
+  }
+
+  handleMiddleClick = account => {
+    return e => {
+      this.props.dispatch(switchAccount(account.get('id'), true));
+      window.open('/', '_blank', 'noopener,noreferrer');
+      e.preventDefault();
+    };
+  }
+
+  fetchOwnAccounts = throttle(() => {
+    this.props.dispatch(fetchOwnAccounts());
+  }, 2000);
+
+  componentDidMount() {
+    this.fetchOwnAccounts();
+  }
+
+  componentDidUpdate(prevProps) {
+    const accountChanged = !ImmutableIs(prevProps.account, this.props.account);
+    const otherAccountsChanged = !ImmutableIs(prevProps.otherAccounts, this.props.otherAccounts);
+
+    if (accountChanged || otherAccountsChanged) {
+      this.fetchOwnAccounts();
+    }
+  }
+
+  renderAccount = account => {
+    return (
+      <Account account={account} showProfileHoverCard={false} />
+    );
+  }
+
+  render() {
+    const { intl, children, account, otherAccounts, isStaff } = this.props;
+
+    const menu = [];
+
+    menu.push({ text: this.renderAccount(account), to: `/@${account.get('acct')}` });
+
+    otherAccounts.forEach(account => {
+      menu.push({
+        text: this.renderAccount(account),
+        action: this.handleSwitchAccount(account),
+        to: '/',
+        // middleClick: this.handleMiddleClick(account),
+      });
+    });
+
+    menu.push(<MenuDivider key='divider' />);
+
+    if (isStaff) {
+      menu.push({
+        text: intl.formatMessage(messages.add),
+        to: '/login',
+        icon: require('@tabler/icons/icons/plus.svg'),
+      });
+    }
+
+    menu.push({
+      text: intl.formatMessage(messages.logout, { acct: account.get('acct') }),
+      to: '/auth/sign_out',
+      action: this.handleLogOut,
+      icon: require('@tabler/icons/icons/logout.svg'),
+    });
+
+    return (
+      <Menu>
+        <MenuButton>
+          {children}
+        </MenuButton>
+
+        <MenuList>
+          {menu.map((menuItem, idx) => {
+            if (typeof menuItem.text === 'undefined') {
+              return menuItem;
+            } else {
+              return (
+                <MenuLink key={idx} href={menuItem.to} onClick={menuItem.action} className='truncate'>
+                  {menuItem.text}
+                </MenuLink>
+              );
+            }
+          })}
+        </MenuList>
+      </Menu>
+    );
+  }
+
+}
+
+export default injectIntl(connect(makeMapStateToProps)(ProfileDropdown));

@@ -1,0 +1,251 @@
+.detailed-status__action-bar-dropdown {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.detailed-status {
+  // padding: 14px 10px;
+
+  &--flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .status__content,
+    .detailed-status__meta {
+      flex: 100%;
+    }
+  }
+
+  .status__content {
+    font-size: 19px;
+    line-height: 24px;
+
+    .emojione {
+      width: 24px;
+      height: 24px;
+      margin: -1px 0 0;
+    }
+
+    .status__content__spoiler-link {
+      line-height: 24px;
+      margin: -1px 0 0;
+    }
+
+    &--big {
+      img.emojione {
+        width: 56px;
+        height: 56px;
+      }
+    }
+  }
+
+  .video-player,
+  .audio-player {
+    margin-top: 8px;
+  }
+}
+
+.detailed-status__meta {
+  margin-top: 15px;
+  color: var(--primary-text-color--faint);
+  font-size: 14px;
+  line-height: 18px;
+  display: flex;
+}
+
+.detailed-status__timestamp {
+  display: flex;
+  align-items: center;
+
+  .svg-icon {
+    width: 20px;
+    height: 20px;
+
+    svg {
+      stroke-width: 1.3px;
+    }
+  }
+
+  .svg-icon,
+  .status__favicon {
+    margin-right: 5px;
+  }
+}
+
+.detailed-status__action-bar {
+  border-top: 1px solid var(--brand-color--faint);
+  border-bottom: 1px solid var(--brand-color--faint);
+  display: flex;
+  flex-direction: row;
+}
+
+.detailed-status__link {
+  color: var(--primary-text-color--faint);
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.detailed-status__button {
+  padding: 10px 0;
+}
+
+.status__button,
+.detailed-status__button {
+  .icon-button {
+    display: inline-flex;
+    align-items: center;
+
+    &__text {
+      font-size: 14px;
+      padding-left: 5px;
+    }
+  }
+
+  .emoji-picker-expand {
+    display: none;
+  }
+
+  &:focus-within {
+    .emoji-picker-expand {
+      display: inline-flex;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+
+      &:focus-within {
+        width: unset;
+      }
+    }
+  }
+}
+
+.detailed-status__wrapper {
+  position: relative;
+}
+
+.detailed-status__application,
+.detailed-status__datetime {
+  color: inherit;
+}
+
+.detailed-status__display-name {
+  color: var(--primary-text-color--faint);
+  display: flex;
+  line-height: 24px;
+  margin-bottom: 15px;
+  overflow: hidden;
+
+  strong,
+  span {
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  strong {
+    font-size: 16px;
+    color: var(--primary-text-color);
+  }
+
+  span.hover-ref-wrapper {
+    display: inline;
+  }
+
+  .display-name__account {
+    display: block;
+    margin-top: -5px;
+  }
+}
+
+.detailed-status__display-avatar {
+  float: left;
+  margin-right: 10px;
+}
+
+.thread {
+  @apply sm:bg-white px-4 py-6 sm:shadow-xl sm:p-6 sm:rounded-xl;
+
+  &__status {
+    @apply relative;
+
+    .status__wrapper {
+      @apply shadow-none p-0;
+    }
+
+    // // Only display line if posts are below
+    // &:last-child .detailed-status__action-bar {
+    //   border-bottom: 0;
+    // }
+  }
+
+  &__descendants {
+    @apply pt-4;
+  }
+
+  &__descendants .thread__status {
+    // @apply py-4;
+  }
+
+  &__descendants .status__content-wrapper,
+  &__ancestors .status__content-wrapper {
+    padding-left: calc(42px + 12px);
+  }
+
+  // &__descendants &__status:first-child {
+  //   margin-top: 10px;
+
+  //   .status__wrapper--filtered {
+  //     margin-top: -10px;
+  //   }
+  // }
+
+  // &__status--focused:first-child,
+  // &__ancestors &__status:first-child {
+  //   margin-top: 10px;
+
+  //   .status__wrapper--filtered {
+  //     margin-top: -10px;
+  //   }
+  // }
+
+  // &__descendants &__status:last-child {
+  //   margin-bottom: 10px;
+
+  //   .status__wrapper--filtered {
+  //     margin-bottom: -10px;
+  //   }
+  // }
+
+  &__connector {
+    background: hsla(var(--primary-text-color_hsl), 0.2);
+    position: absolute;
+    width: 2px;
+    left: 20px;
+    display: none;
+
+    &--bottom {
+      display: block;
+      height: calc(100% - 15px - 48px);
+      top: calc(12px + 42px);
+    }
+  }
+}
+
+.thread {
+  .ptr,
+  .ptr__children {
+    background: var(--foreground-color) !important;
+    border-radius: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    @media screen and (max-width: 580px) {
+      border-radius: 0;
+    }
+  }
+}

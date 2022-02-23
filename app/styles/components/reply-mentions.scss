@@ -1,0 +1,23 @@
+.reply-mentions {
+  @apply text-gray-500 mb-1 text-sm;
+
+  &__account {
+    @apply text-primary-600 no-underline;
+
+    &:hover {
+      @apply underline text-primary-800;
+    }
+  }
+}
+
+.status__wrapper,
+.detailed-status {
+  .reply-mentions {
+    display: block;
+    margin: 4px 0 0 0;
+
+    span {
+      cursor: pointer;
+    }
+  }
+}
